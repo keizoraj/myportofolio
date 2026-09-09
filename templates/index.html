@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keizora - Portfolio</title>
+    <title>{{ name }} - Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -12,10 +12,10 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <a href="#profile" class="brand">Keizora</a>
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
             <nav>
-                <a href="#profile">Profile</a>
-                <a href="#experience">Experience</a>
+                <a href="{% url 'main:show_main' %}">Profile</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
             </nav>
         </div>
     </header>
@@ -25,22 +25,22 @@
             <div class="container hero-grid">
                 <div class="hero-identity">
                     <p class="hero-kicker">Information System &middot; Universitas Indonesia</p>
-                    <h1>Keizora Jelita Wohingati</h1>
+                    <h1>{{ name }}</h1>
                 </div>
                 <div class="hero-photo">
                     <div class="photo-block"></div>
-                    <img class="avatar" src="/static/img/keizora_jelita.jpeg" alt="Photo of Keizora Jelita Wohingati">
+                    <img class="avatar" src="/static/img/keizora_jelita.jpeg" alt="Photo of {{ name }}">
                 </div>
                 <div class="hero-details">
-                    <p class="bio">Undergraduate Information Systems student at University of Indonesia. Starting my second year and surprisingly still surviving (hopefully).</p>
+                    <p class="bio">{{ bio }}</p>
                     <dl class="meta-list">
                         <div class="meta-row">
                             <dt>NPM</dt>
-                            <dd>2506597510</dd>
+                            <dd>{{ npm }}</dd>
                         </div>
                         <div class="meta-row">
                             <dt>Program</dt>
-                            <dd>S1 Sistem Informasi</dd>
+                            <dd>{{ study_program }}</dd>
                         </div>
                     </dl>
                     <div class="social-links">
@@ -51,56 +51,11 @@
                 </div>
             </div>
         </section>
-
-        <section class="experience" id="experience">
-            <div class="container">
-                <p class="section-kicker">My Journey</p>
-                <h2>Organizational Experience</h2>
-
-                <div class="experience-grid">
-
-                    <article class="experience-card">
-                        <p class="experience-date">Apr 2026 – Present</p>
-                        <h3>Product Management Academy Staff</h3>
-                        <p class="experience-organization">COMPFEST</p>
-                        <p class="experience-description">
-                            Contributing as a staff member in the Product Management Academy
-                            and helping with the preparation and execution of the program. I helped
-                            in reaching out to potential speakers and mentors for the boothcamp. I became
-                            an LO for one of the teams and am responsible for information sharing within the group.
-                            I also had a chance to become an MC for one of the zoom meetings we conducted.
-                        </p>
-                    </article>
-
-                    <article class="experience-card">
-                        <p class="experience-date">Aug 2023 – Nov 2023</p>
-                        <h3>Sponsorship Staff</h3>
-                        <p class="experience-organization">Screnixi 7th</p>
-                        <p class="experience-description">
-                            Handled the donors subdivision and helped manage sponsorship-related
-                            activities during the event.
-                        </p>
-                    </article>
-
-                    <article class="experience-card">
-                        <p class="experience-date">Aug 2022 – Nov 2022</p>
-                        <h3>Liaisons Officer Staff</h3>
-                        <p class="experience-organization">Screnixi 6th</p>
-                        <p class="experience-description">
-                            Served as a contact person for participants in one of the categories
-                            and for one of the guest stars.
-                        </p>
-                    </article>
-
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Keizora. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
         </div>
     </footer>
 </body>
