@@ -2,14 +2,14 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from main.models import Experience
+from main.models import Experience, Project
 
 
 class MainTest(TestCase):
     def setUp(self):
         self.experience = Experience.objects.create(
-            title="Asisten Dosen PBP",
-            description="Membantu mahasiswa memahami pengembangan web.",
+            title="Product Management Academy Staff",
+            description="Contributing as a staff member in the Product Management Academy.",
             category="part-time",
         )
 
@@ -27,7 +27,7 @@ class MainTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_experience_model(self):
-        self.assertEqual(str(self.experience), "Asisten Dosen PBP")
+        self.assertEqual(str(self.experience), "Product Management Academy Staff")
         self.assertEqual(self.experience.category, "part-time")
         self.assertTrue(self.experience.is_ongoing)
 
@@ -56,3 +56,30 @@ class MainTest(TestCase):
         self.assertFalse(self.experience.is_ongoing)
         self.assertContains(response, "Selesai")
         self.assertNotContains(response, "Sedang berlangsung")
+
+    def test_projects_page_is_accessible(self): 
+        response = self.client.get(reverse("main:show_projects"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "projects.html") 
+
+    def test_project_data_appears_on_page(self): 
+        project = Project.objects.create( 
+            title="Greenspark", 
+            description="An application dedicated to helping households, small business, and large business manage their wastes. From picking up and dropping off the wastes to nearby landfill, until educating users how to manage their wastes properly.", 
+            category="Web Application", 
+            year=2025, 
+        ) 
+
+        response = self.client.get(reverse("main:show_projects")) 
+
+        self.assertContains(response, project.title) 
+        self.assertContains(response, project.description) 
+        self.assertContains(response, project.category) 
+        self.assertContains(response, str(project.year)) 
+
+    def test_empty_project_page(self): 
+        response = self.client.get(reverse("main:show_projects")) 
+        self.assertContains( 
+            response, 
+            "No projects available yet." )
