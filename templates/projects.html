@@ -1,78 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ name }} - Projects</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-
-<body>
-
-    <header class="site-header">
-        <div class="container">
-            <a href="{% url 'main:show_main' %}" class="brand">
-                {{ name }}
-            </a>
-
-            <nav>
-                <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_projects' %}">Projects</a>
-            </nav>
-        </div>
-    </header>
-
+{% extends "base.html" %}
+{% block meta %}
+    <title>Projects - {{ name }}</title>
+{% endblock meta %}
+{% block content %}
     <main>
-        <section class="experience-section">
+        <section class="experience-section" id="experience">
             <div class="container">
-
-                <p class="section-kicker">Portfolio</p>
-                <h1>Projects</h1>
-
-                {% if project_list %}
-                    <div class="experience-grid">
-                        {% for project in project_list %}
-                            <article class="experience-card">
-                                <p class="experience-category">
-                                    {{ project.category }}
-                                </p>
-
-                                <h2>{{ project.title }}</h2>
-
-                                <p class="experience-description">
-                                    {{ project.description }}
-                                </p>
-
-                                <p class="experience-status">
-                                    {{ project.year }}
-                                </p>
-                            </article>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="empty-state">
-                        No projects available yet.
-                    </p>
-                {% endif %}
-
+                <p class="section-kicker">Karya yang saya bangun</p>
+                <div class="project-header">
+                    <h1>Projects</h1>
+                    <a href="{% url 'main:create_project' %}" class="button button-primary project-add-button">
+                        <span aria-hidden="true">+</span> Tambah Proyek
+                    </a>
+                </div>
+                <form method="get"
+                      action="{% url 'main:show_projects' %}"
+                      class="project-search">
+                    <input type="search"
+                           name="title"
+                           value="{{ title_query }}"
+                           placeholder="Cari berdasarkan nama proyek"
+                           class="project-search__input"
+                           aria-label="Cari berdasarkan nama proyek">
+                    <button type="submit" class="button button-primary">Cari</button>
+                </form>
+                <div class="experience-grid project-grid">
+                    {% for project in project_list %}
+                        <article class="experience-card">
+                            {% if project.project_image_url %}
+                                <img src="{{ project.project_image_url }}"
+                                     alt="Gambar {{ project.title }}"
+                                     class="project-image">
+                            {% endif %}
+                            <h2>{{ project.title }}</h2>
+                            <span class="experience-category">{{ project.tech_stack }}</span>
+                            <p class="experience-description">{{ project.description }}</p>
+                            <div class="project-card-actions">
+                                <div class="project-actions">
+                                    {% if project.project_url %}
+                                        <a href="{{ project.project_url }}" class="button">Lihat Project</a>
+                                    {% endif %}
+                                    {% include "components/project_delete_modal.html" with project=project %}
+                                </div>
+                            </div>
+                        </article>
+                    {% empty %}
+                        {% if title_query %}
+                            <p class="empty-state">Tidak ada proyek dengan nama tersebut.</p>
+                        {% else %}
+                            <p class="empty-state">Belum ada proyek yang ditambahkan.</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </section>
     </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <p>
-                &copy; 2026 {{ name }}.
-                Fakultas Ilmu Komputer, Universitas Indonesia.
-            </p>
-        </div>
-    </footer>
-
-</body>
-</html>
+{% endblock content %}

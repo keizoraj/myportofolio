@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block meta %}
+    <title>Add Project - {{ name }}</title>
+{% endblock meta %}
+{% block content %}
+    <main>
+        <section class="experience-section">
+            <div class="container">
+                <h1>Add New Projects</h1>
+                <form method="post"
+                      action="{% url 'main:create_project' %}"
+                      class="project-form">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div style="color: #b42318; font-size: 0.8rem; margin-top: 0.25rem;">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="button">Tambah Project</button>
+                    <a href="{% url 'main:show_projects' %}" class="button button-secondary">Batal</a>
+                </form>
+            </div>
+        </section>
+    </main>
+{% endblock content %}

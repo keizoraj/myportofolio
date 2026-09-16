@@ -31,8 +31,9 @@ class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    category = models.CharField(max_length=100)
-    year = models.IntegerField()
-
+    tech_stack = models.CharField(max_length=255, null=True, blank=True)
+    project_url = models.URLField(blank=True)
+    project_image_url = models.URLField(blank=True, max_length=500)
+    
     def __str__(self):
         return self.title
