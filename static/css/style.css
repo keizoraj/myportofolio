@@ -531,3 +531,16 @@ h1, .brand {
     gap: 1rem;
     margin-top: 1.5rem;
 }
+
+.form-error {
+    color: var(--accent-dark);
+    font-size: 0.8rem;
+}
+
+.experience-card .project-actions {
+    margin-top: 1.25rem;
+}
+
+.experience-card .project-actions form {
+    margin: 0;
+}

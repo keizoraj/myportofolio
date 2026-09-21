@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block meta %}
+    <title>{{ form_title }} - {{ name }}</title>
+{% endblock meta %}
+
+{% block content %}
+    <main>
+        <section class="experience-section">
+            <div class="container">
+
+                <p class="section-kicker">
+                    Kelola pendidikan saya
+                </p>
+
+                <h1>{{ form_title }}</h1>
+
+                <div class="form-container">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            <div class="form-group">
+
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <small>
+                                        {{ field.help_text }}
+                                    </small>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <small class="form-error">
+                                        {{ error }}
+                                    </small>
+                                {% endfor %}
+
+                            </div>
+                        {% endfor %}
+
+                        <div class="form-actions">
+
+                            <a href="{% url 'main:show_education' %}"
+                               class="button button-secondary">
+                                Batal
+                            </a>
+
+                            <button type="submit" class="button">
+                                {{ submit_text }}
+                            </button>
+
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </section>
+    </main>
+{% endblock content %}

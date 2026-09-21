@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block meta %}
+    <title>Education - {{ name }}</title>
+{% endblock meta %}
+
+{% block content %}
+    <main>
+        <section class="experience-section" id="education">
+            <div class="container">
+
+                <div class="project-header">
+                    <div>
+                        <p class="section-kicker">
+                            Perjalanan pendidikan saya
+                        </p>
+                        <h1>Education</h1>
+                    </div>
+
+                    <a href="{% url 'main:create_education' %}"
+                       class="button project-add-button">
+                        <span>+</span>
+                        Tambah Pendidikan
+                    </a>
+                </div>
+
+                <div class="experience-grid">
+                    {% for education in education_list %}
+                        <article class="experience-card">
+
+                            <span class="experience-category">
+                                {{ education.degree }}
+                            </span>
+
+                            <h2>{{ education.institution }}</h2>
+
+                            <p class="experience-description">
+                                {{ education.description }}
+                            </p>
+
+                            <p class="experience-status">
+                                {{ education.started_at|date:"F Y" }}
+                                -
+                                {% if education.is_ongoing %}
+                                    Sekarang
+                                {% else %}
+                                    {{ education.ended_at|date:"F Y" }}
+                                {% endif %}
+                            </p>
+
+                            <div class="project-actions">
+
+                                <a href="{% url 'main:update_education' education.id %}"
+                                   class="button">
+                                    Edit
+                                </a>
+
+                                <form method="POST"
+                                      action="{% url 'main:delete_education' education.id %}">
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="button button-danger"
+                                            onclick="return confirm('Yakin ingin menghapus pendidikan ini?');">
+                                        Hapus
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </article>
+
+                    {% empty %}
+                        <p class="empty-state">
+                            Belum ada data pendidikan yang ditambahkan.
+                        </p>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </section>
+    </main>
+{% endblock content %}
