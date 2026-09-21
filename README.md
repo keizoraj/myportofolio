@@ -37,4 +37,6 @@ Pada tugas 2 ini saya menggunakan chatgpt untuk membantu saya dalam ide pembuata
 3. ModelForm mempermudah pembuatan form karena form dapat dibuat berdasarkan model yang sudah ada. Field dan validasi dasar juga dapat dibuat oleh Django secara otomatis. Selain itu, data yang sudah valid dapat langsung disimpan ke database menggunakan form.save(), sehingga kode yang dibutuhkan lebih sedikit dibandingkan membuat form secara manual.
 
 AI DECLARATION:
-Pada tugas ini, saya menggunakan chatgpt untuk membantu saya dalam pembuatan testcase dan menanyakan apakah testcase saya sudah mengcover keseluruhan program saya.
+Pada tugas ini, saya menggunakan chatgpt untuk membantu saya dalam testcase dan menanyakan apakah testcase saya sudah mengcover keseluruhan program saya.
+
+AI chat history: https://chatgpt.com/share/6ab1399f-0c58-83ec-ab4f-09f4ffab908e
