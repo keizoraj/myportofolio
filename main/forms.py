@@ -1,6 +1,6 @@
-from django.forms import ModelForm, TextInput, Textarea, URLInput
+from django.forms import ModelForm, TextInput, Textarea, URLInput, DateTimeInput
 
-from main.models import Project
+from main.models import Project, Experience, Education
 
 class ProjectForm(ModelForm):
     class Meta:
@@ -47,6 +47,106 @@ class ProjectForm(ModelForm):
             "project_image_url": URLInput(
                 attrs={
                     "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
+                }
+            ),
+        }
+
+class ExperienceForm(ModelForm):
+    class Meta:
+        model = Experience
+        fields = [
+            "title",
+            "description",
+            "category",
+            "thumbnail",
+            "started_at",
+            "ended_at",
+        ]
+
+        labels = {
+            "title": "Nama Experience",
+            "description": "Deskripsi Experience",
+            "category": "Kategori",
+            "thumbnail": "URL Thumbnail",
+            "ended_at": "Tanggal Selesai",
+        }
+
+        widgets = {
+            "title": TextInput(
+                attrs={
+                    "placeholder": "Product Management Academy Staff",
+                    "maxlength": 255,
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    "placeholder": "Ceritakan pengalamanmu",
+                    "rows": 4,
+                }
+            ),
+            "thumbnail": URLInput(
+                attrs={
+                    "placeholder": "https://example.com/image.jpg",
+                }
+            ),
+            "started_at": DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                }
+            ),
+            "ended_at": DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                }
+            ),
+        }
+
+class EducationForm(ModelForm):
+    class Meta:
+        model = Education
+        fields = [
+            "institution",
+            "degree",
+            "description",
+            "started_at",
+            "ended_at",
+        ]
+
+        labels = {
+            "institution": "Nama Institusi",
+            "degree": "Jenjang / Program Studi",
+            "description": "Deskripsi Pendidikan",
+            "started_at": "Tanggal Mulai",
+            "ended_at": "Tanggal Selesai",
+        }
+
+        widgets = {
+            "institution": TextInput(
+                attrs={
+                    "placeholder": "Universitas Indonesia",
+                    "maxlength": 255,
+                }
+            ),
+            "degree": TextInput(
+                attrs={
+                    "placeholder": "S1 Sistem Informasi",
+                    "maxlength": 255,
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    "placeholder": "Ceritakan pendidikanmu",
+                    "rows": 4,
+                }
+            ),
+            "started_at": DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                }
+            ),
+            "ended_at": DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
                 }
             ),
         }
