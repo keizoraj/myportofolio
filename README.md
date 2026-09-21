@@ -26,3 +26,15 @@ Pada tugas ini saya menggunakan chatgpt untuk menjelaskan kepada saya bagaimana 
 
 AI DECLARATION:
 Pada tugas 2 ini saya menggunakan chatgpt untuk membantu saya dalam ide pembuatan test case, saya juga menggunakannya untuk membantu ketika ada problem saat ingin saya commit dan malah terjadi error.
+
+
+### Tugas 3
+
+1. GET request digunakan untuk mengambil atau menampilkan data dari server, sedangkan POST request digunakan untuk mengirim data ke server. Pada proyek ini, GET digunakan untuk menampilkan halaman dan mengambil data, sedangkan POST digunakan ketika user mengisi form untuk menambah atau mengubah data.
+
+2. Kedua fungsi tersebut memiliki tugas yang berbeda. Fungsi untuk menampilkan form digunakan ketika user membuka halaman form, sedangkan fungsi untuk memproses submission digunakan untuk menerima data yang dikirim melalui POST, melakukan validasi, dan menyimpan data jika data yang diberikan valid. Dengan memisahkan proses tersebut, alur penggunaan form menjadi lebih jelas.
+
+3. ModelForm mempermudah pembuatan form karena form dapat dibuat berdasarkan model yang sudah ada. Field dan validasi dasar juga dapat dibuat oleh Django secara otomatis. Selain itu, data yang sudah valid dapat langsung disimpan ke database menggunakan form.save(), sehingga kode yang dibutuhkan lebih sedikit dibandingkan membuat form secara manual.
+
+AI DECLARATION:
+Pada tugas ini, saya menggunakan chatgpt untuk membantu saya dalam pembuatan testcase dan menanyakan apakah testcase saya sudah mengcover keseluruhan program saya.
