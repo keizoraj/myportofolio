@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect,render
 from main.models import Experience, Project, Education
 from main.forms import ProjectForm, ExperienceForm, EducationForm
@@ -27,22 +27,18 @@ def show_main(request):
 
 
 def show_experience(request):
-    json_response = get_experience_json(request)
-
-    experiences = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-
-    experiences = [experience.object for experience in experiences]
-
     context = {
         "name": "Keizora",
         "experience_list": Experience.objects.all(),
+        "is_editor": is_editor(request.user),
     }
-    return render(request, "experience.html", context)
+    return render(request, "experience.html", context)    
 
+@login_required(login_url="/login/")
 def create_experience(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     form = ExperienceForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -59,7 +55,11 @@ def create_experience(request):
 
     return render(request, "experience_form.html", context)
 
+@login_required(login_url="/login/")
 def update_experience(request, experience_id):
+    if not can_edit(request.user):
+        raise PermissionDenied
+
     experience = get_object_or_404(Experience, pk=experience_id)
 
     form = ExperienceForm(
@@ -81,7 +81,11 @@ def update_experience(request, experience_id):
 
     return render(request, "experience_form.html", context)
 
+@login_required(login_url="/login/")
 def delete_experience(request, experience_id):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     experience = get_object_or_404(Experience, pk=experience_id)
 
     if request.method == "POST":
@@ -105,21 +109,12 @@ def get_experience_json(request):
     )
 
 def show_education(request):
-    json_response = get_education_json(request)
-
-    education_list = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-
-    education_list = [
-        education.object
-        for education in education_list
-    ]
+    education_list = Education.objects.all()
 
     context = {
         "name": "Keizora",
         "education_list": education_list,
+        "is_editor": is_editor(request.user),
     }
 
     return render(
@@ -128,8 +123,11 @@ def show_education(request):
         context
     )
 
-
+@login_required(login_url="/login/")
 def create_education(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     form = EducationForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -153,8 +151,11 @@ def create_education(request):
         context
     )
 
-
+@login_required(login_url="/login/")
 def update_education(request, education_id):
+    if not can_edit(request.user):
+        raise PermissionDenied
+
     education = get_object_or_404(
         Education,
         pk=education_id
@@ -186,8 +187,11 @@ def update_education(request, education_id):
         context
     )
 
-
+@login_required(login_url="/login/")
 def delete_education(request, education_id):
+    if not can_edit(request.user):
+        raise PermissionDenied
+
     education = get_object_or_404(
         Education,
         pk=education_id
@@ -217,19 +221,20 @@ def get_education_json(request):
     )
 
 def show_projects(request):
-    json_response = get_projects_json(request)
-
-    projects = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    projects = [project.object for project in projects]
     title_query = request.GET.get("title", "").strip()
+
+    projects = Project.objects.all()
+
+    if title_query:
+        projects = projects.filter(
+            title__icontains=title_query
+        )
 
     context = {
         "name": "Keizora",
         "project_list": projects,
         "title_query": title_query,
+        "is_editor": is_editor(request.user),
     }
     return render(request, "projects.html", context)
 
@@ -258,9 +263,20 @@ def get_projects_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
-    projects_json = serializers.serialize("json", projects, use_natural_foreign_keys=True)
+    projects_json = serializers.serialize(
+        "json",
+        projects,
+        fields=(
+            "title",
+            "description",
+            "tech_stack",
+            "project_url",
+            "project_image_url",
+        ),
+    )
     return HttpResponse(projects_json, content_type="application/json")
 
+@login_required(login_url="/login/")
 def delete_project(request, project_id):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -274,6 +290,42 @@ def delete_project(request, project_id):
 
     return redirect("main:show_projects")
 
+@login_required(login_url="/login/")
+def update_project(request, project_id):
+    if not can_edit(request.user):
+        raise PermissionDenied
+
+    project = get_object_or_404(
+        Project,
+        pk=project_id
+    )
+
+    form = ProjectForm(
+        request.POST or None,
+        instance=project
+    )
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(
+            request,
+            "Project berhasil diperbarui!"
+        )
+        return redirect("main:show_projects")
+
+    context = {
+        "name": "Keizora",
+        "form": form,
+        "form_title": "Edit Project",
+        "submit_text": "Simpan Perubahan",
+    }
+
+    return render(
+        request,
+        "projects_form.html",
+        context
+    )
+
 def register(request):
     form = UserCreationForm(request.POST or None)
 
@@ -283,7 +335,7 @@ def register(request):
         return redirect("main:login")
 
     context = {
-        "name": "Burhan",
+        "name": "Keizora",
         "form": form,
     }
     return render(request, "register.html", context)
@@ -295,11 +347,11 @@ def login_user(request):
         user = form.get_user()
         login(request, user)
         response = redirect("main:show_main")
-        response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        response.set_cookie('last_login', timezone.localtime().strftime("%Y-%m-%d %H:%M:%S"))
         return response
 
     context = {
-        "name": "Burhan",
+        "name": "Keizora",
         "form": form,
     }
     return render(request, "login.html", context)
@@ -313,14 +365,28 @@ def logout_user(request):
 # Tanpa cek is_superuser: semua akun yang sudah login boleh memberi star
 @login_required(login_url="/login/")
 def toggle_star(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+    if request.method != "POST":
+        raise PermissionDenied
 
-    if request.method == "POST":
-        # Kalau akun ini sudah pernah memberi star, batalkan star-nya.
-        # Kalau belum, tambahkan star.
-        if request.user in project.starred_by.all():
-            project.starred_by.remove(request.user)
-        else:
-            project.starred_by.add(request.user)
+    project = get_object_or_404(
+        Project,
+        pk=project_id
+    )
+
+    if project.starred_by.filter(
+        pk=request.user.pk
+    ).exists():
+        project.starred_by.remove(request.user)
+    else:
+        project.starred_by.add(request.user)
 
     return redirect("main:show_projects")
+
+def is_editor(user):
+    return (
+        user.is_authenticated
+        and user.groups.filter(name="Editor").exists()
+    )
+
+def can_edit(user):
+    return user.is_superuser or is_editor(user)
