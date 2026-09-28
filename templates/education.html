@@ -16,11 +16,13 @@
                         <h1>Education</h1>
                     </div>
 
-                    <a href="{% url 'main:create_education' %}"
-                       class="button project-add-button">
-                        <span>+</span>
-                        Tambah Pendidikan
-                    </a>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'main:create_education' %}"
+                        class="button project-add-button">
+                            <span>+</span>
+                            Tambah Pendidikan
+                        </a>
+                    {% endif %}
                 </div>
 
                 <div class="experience-grid">
@@ -49,21 +51,25 @@
 
                             <div class="project-actions">
 
-                                <a href="{% url 'main:update_education' education.id %}"
-                                   class="button">
-                                    Edit
-                                </a>
+                                {% if user.is_superuser or is_editor %}
+                                    <a href="{% url 'main:update_education' education.id %}"
+                                    class="button">
+                                        Edit
+                                    </a>
+                                {% endif %}
 
-                                <form method="POST"
-                                      action="{% url 'main:delete_education' education.id %}">
-                                    {% csrf_token %}
+                                {% if user.is_superuser %}
+                                    <form method="POST"
+                                        action="{% url 'main:delete_education' education.id %}">
+                                        {% csrf_token %}
 
-                                    <button type="submit"
-                                            class="button button-danger"
-                                            onclick="return confirm('Yakin ingin menghapus pendidikan ini?');">
-                                        Hapus
-                                    </button>
-                                </form>
+                                        <button type="submit"
+                                                class="button button-danger"
+                                                onclick="return confirm('Yakin ingin menghapus pendidikan ini?');">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                {% endif %}
 
                             </div>
 
