@@ -40,3 +40,7 @@ AI DECLARATION:
 Pada tugas ini, saya menggunakan chatgpt untuk membantu saya dalam testcase dan menanyakan apakah testcase saya sudah mengcover keseluruhan program saya.
 
 AI chat history: https://chatgpt.com/share/6ab1399f-0c58-83ec-ab4f-09f4ffab908e
+
+### Tugas 4
+AI DECLARATION:
+Pada tugas ini, saya menggunakan chatgpt untuk membantu saya dalam set up superuser dan penggunaan group editor. 
