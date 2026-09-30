@@ -20,14 +20,28 @@ from main.views import (
     logout_user,
     toggle_star,
     update_project,
+    create_project_ajax
 )
 
 app_name = "main"
 
 urlpatterns = [
-    path("", show_main, name="show_main"),
-    path("experience/", show_experience, name="show_experience"),
-    path("experience/add/", create_experience, name="create_experience"),
+    path(
+        "", 
+        show_main,
+        name="show_main"
+    ),
+
+    path(
+        "experience/", 
+        show_experience, 
+        name="show_experience"
+    ),
+    path(
+        "experience/add/", 
+        create_experience, 
+        name="create_experience"
+    ),
     path(
         "experience/<uuid:experience_id>/edit/",
         update_experience,
@@ -44,32 +58,31 @@ urlpatterns = [
         name="get_experience_json",
     ),
 
-    path("projects/", show_projects, name="show_projects"),
-
+    path(
+        "projects/", 
+        show_projects, 
+        name="show_projects"
+    ),
     path(
         "projects/add/",
         create_project,
         name="create_project",
     ),
-
     path(
         "projects/<uuid:project_id>/edit/",
         update_project,
         name="update_project",
     ),
-
     path(
         "projects/<uuid:project_id>/delete/",
         delete_project,
         name="delete_project",
     ),
-
     path(
         "projects/<uuid:project_id>/star/",
         toggle_star,
         name="toggle_star",
     ),
-
     path(
         "api/projects/",
         get_projects_json,
@@ -81,25 +94,21 @@ urlpatterns = [
     show_education,
     name="show_education",
     ),
-
     path(
         "education/add/",
         create_education,
         name="create_education",
     ),
-
     path(
         "education/<uuid:education_id>/edit/",
         update_education,
         name="update_education",
     ),
-
     path(
         "education/<uuid:education_id>/delete/",
         delete_education,
         name="delete_education",
     ),
-
     path(
         "api/education/",
         get_education_json,
@@ -127,10 +136,15 @@ urlpatterns = [
         toggle_star,
         name="toggle_star",
     ),
-
     path(
     "projects/<uuid:project_id>/edit/",
     update_project,
     name="update_project",
+    ),
+
+    path(
+        "projects/add-ajax/", 
+        create_project_ajax, 
+        name="create_project_ajax"
     ),
 ]
