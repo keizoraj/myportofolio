@@ -1,0 +1,106 @@
+{% load static %}
+
+<div id="education-modal" class="project-form-modal" popover="auto">
+    <div class="project-form-modal__content">
+        <div class="project-form-modal__header">
+            <div>
+                <p class="section-kicker">Tambah Data</p>
+                <h2>Tambah Pendidikan</h2>
+            </div>
+
+            <button
+                type="button"
+                class="project-form-modal__close"
+                popovertarget="education-modal"
+                popovertargetaction="hide"
+                aria-label="Tutup modal"
+            >
+                &times;
+            </button>
+        </div>
+
+        <form
+            id="education-form"
+            method="POST"
+            action="{% url 'main:create_education_ajax' %}"
+        >
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_institution">Nama Institusi</label>
+                <input
+                    type="text"
+                    name="institution"
+                    id="id_institution"
+                    placeholder="Universitas Indonesia"
+                    maxlength="255"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="id_degree">Jenjang / Program Studi</label>
+                <input
+                    type="text"
+                    name="degree"
+                    id="id_degree"
+                    placeholder="S1 Sistem Informasi"
+                    maxlength="255"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">Deskripsi Pendidikan</label>
+                <textarea
+                    name="description"
+                    id="id_description"
+                    placeholder="Ceritakan pendidikanmu"
+                    rows="4"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="id_started_at">Tanggal Mulai</label>
+                <input
+                    type="datetime-local"
+                    name="started_at"
+                    id="id_started_at"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="id_ended_at">Tanggal Selesai</label>
+                <input
+                    type="datetime-local"
+                    name="ended_at"
+                    id="id_ended_at"
+                >
+                <small class="form-help">
+                    Kosongkan jika masih berlangsung.
+                </small>
+            </div>
+
+            <div class="project-form-modal__actions">
+                <button
+                    type="button"
+                    class="button button-secondary"
+                    popovertarget="education-modal"
+                    popovertargetaction="hide"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="submit"
+                    class="button"
+                    id="education-submit-button"
+                >
+                    Tambah Pendidikan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
