@@ -44,3 +44,14 @@ AI chat history: https://chatgpt.com/share/6ab1399f-0c58-83ec-ab4f-09f4ffab908e
 ### Tugas 4
 AI DECLARATION:
 Pada tugas ini, saya menggunakan chatgpt untuk membantu saya dalam set up superuser dan penggunaan group editor. 
+
+### Tugas 5
+
+1. Debouncing adalah teknik untuk memberikan jeda sebelum menjalankan suatu fungsi setelah adanya input dari pengguna. Pada AJAX search, debouncing penting supaya request ke server tidak dikirim setiap kali pengguna mengetik satu karakter. Dengan debouncing, request baru akan dikirim setelah pengguna berhenti mengetik selama beberapa waktu, sehingga jumlah request lebih sedikit dan pencarian menjadi lebih efisien.
+
+2. await digunakan untuk menunggu proses fetch() selesai sebelum kode berikutnya dijalankan. Dengan menggunakan await, hasil dari request dapat langsung digunakan setelah prosesnya selesai, sehingga alur kode lebih mudah dibaca. Kalau tidak menggunakan await, proses fetch() akan tetap berjalan secara asynchronous dan kode berikutnya dapat dijalankan terlebih dahulu sebelum response dari server diterima. Akibatnya, kita tidak bisa langsung menggunakan hasil response tersebut tanpa menangani Promise-nya.
+
+3. XSS (Cross-Site Scripting) adalah serangan ketika kode atau script berbahaya dimasukkan ke dalam data yang kemudian ditampilkan pada halaman website. Pada AJAX dan JavaScript, data dari server dimasukkan secara langsung ke dalam DOM sehingga jika data tersebut tidak di-escape, input yang mengandung HTML atau JavaScript dapat dijalankan sebagai bagian dari halaman. Pada Django template rendering, Django secara default melakukan escaping terhadap nilai yang ditampilkan melalui template. Karena itu, saat menggunakan JavaScript untuk membuat elemen HTML dari data AJAX, saya perlu melakukan escaping secara manual terhadap text yang ditampilkan.
+
+AI DECLARATION:
+Pada tugas ini, saya menggunakan chatgpt untuk membantu saya dalam mengimplementasikan AJAX pada bagian Education, terutama untuk menampilkan data, search dengan debounce, menambahkan data melalui modal, dan membuat fitur star. Saya juga menggunakan chatgpt untuk membantu mengecek error yang muncul selama pengerjaan tugas dan memastikan implementasi saya sudah sesuai dengan requirement tugas.
