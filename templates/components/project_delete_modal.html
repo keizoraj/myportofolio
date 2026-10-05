@@ -12,76 +12,55 @@
      role="dialog"
      aria-modal="true"
      aria-labelledby="delete-project-title-{{ project.id }}">
+
     <button type="button"
             class="project-delete-modal__backdrop"
             popovertarget="delete-project-{{ project.id }}"
             popovertargetaction="hide"
-            aria-label="Tutup konfirmasi hapus"></button>
+            aria-label="Tutup konfirmasi hapus">
+    </button>
+
     <div class="project-delete-modal__content">
+
         <button type="button"
                 class="project-delete-modal__close"
                 popovertarget="delete-project-{{ project.id }}"
                 popovertargetaction="hide"
-                aria-label="Tutup konfirmasi hapus">×</button>
-        <h2 id="delete-project-title-{{ project.id }}">Hapus Projek?</h2>
+                aria-label="Tutup konfirmasi hapus">
+            ×
+        </button>
+
+        <h2 id="delete-project-title-{{ project.id }}">
+            Hapus Projek?
+        </h2>
+
         <p>
             Apakah Anda yakin ingin menghapus
             <strong>{{ project.title }}</strong>?
         </p>
+
         <div class="project-delete-modal__actions">
+
             <button type="button"
                     class="button button-secondary"
                     popovertarget="delete-project-{{ project.id }}"
-                    popovertargetaction="hide">Batal</button>
-            <form method="post" action="{% url 'main:delete_project' project.id %}">
+                    popovertargetaction="hide">
+                Batal
+            </button>
+
+            <form method="post"
+                  action="{% url 'main:delete_project' project.id %}">
+
                 {% csrf_token %}
-                <button type="submit" class="button button-danger">Ya, Hapus</button>
+
+                <button type="submit"
+                        class="button button-danger">
+                    Ya, Hapus
+                </button>
+
             </form>
+
         </div>
-    </div>
-</div>
 
-<div id="add-project-modal"
-     class="project-form-modal"
-     popover="auto"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="add-project-modal-title">
-    <button type="button"
-            class="project-form-modal__backdrop"
-            popovertarget="add-project-modal"
-            popovertargetaction="hide"
-            aria-label="Tutup form tambah proyek"></button>
-
-    <div class="project-form-modal__content">
-        <button type="button"
-                class="project-form-modal__close"
-                popovertarget="add-project-modal"
-                popovertargetaction="hide"
-                aria-label="Tutup form tambah proyek">×</button>
-
-        <h2 id="add-project-modal-title">Tambah Proyek Baru</h2>
-        <form id="project-form"
-              method="post"
-              action="{% url 'main:create_project' %}"
-              class="project-form">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% for error in field.errors %}
-                        <p class="form-error">{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-            <div class="project-form-modal__actions">
-                <button type="button"
-                        class="button button-secondary"
-                        popovertarget="add-project-modal"
-                        popovertargetaction="hide">Batal</button>
-                <button type="submit" class="button">Tambah Proyek</button>
-            </div>
-        </form>
     </div>
 </div>
