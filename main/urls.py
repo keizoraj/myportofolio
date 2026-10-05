@@ -20,7 +20,9 @@ from main.views import (
     logout_user,
     toggle_star,
     update_project,
-    create_project_ajax
+    create_project_ajax,
+    create_education_ajax,
+    toggle_education_star,
 )
 
 app_name = "main"
@@ -58,6 +60,7 @@ urlpatterns = [
         name="get_experience_json",
     ),
 
+
     path(
         "projects/", 
         show_projects, 
@@ -88,6 +91,11 @@ urlpatterns = [
         get_projects_json,
         name="get_projects_json",
     ),
+    path(
+        "projects/add-ajax/", 
+        create_project_ajax, 
+        name="create_project_ajax"
+    ),
     
     path(
     "education/",
@@ -114,6 +122,17 @@ urlpatterns = [
         get_education_json,
         name="get_education_json",
     ),
+    path(
+        "education/add-ajax/",
+        create_education_ajax,
+        name="create_education_ajax",
+    ),
+    path(
+        "education/<uuid:education_id>/star/",
+        toggle_education_star,
+        name="toggle_education_star",
+    ),
+
 
     path(
         "register/", 
@@ -129,22 +148,5 @@ urlpatterns = [
         "logout/", 
         logout_user, 
         name="logout"
-    ),
-
-    path(
-        "projects/<uuid:project_id>/star/",
-        toggle_star,
-        name="toggle_star",
-    ),
-    path(
-    "projects/<uuid:project_id>/edit/",
-    update_project,
-    name="update_project",
-    ),
-
-    path(
-        "projects/add-ajax/", 
-        create_project_ajax, 
-        name="create_project_ajax"
     ),
 ]
