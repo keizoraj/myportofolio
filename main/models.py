@@ -42,6 +42,11 @@ class Education(models.Model):
         blank=True,
         null=True
     )
+    starred_by = models.ManyToManyField(
+        User,
+        related_name="starred_educations",
+        blank=True
+    )
 
     def __str__(self):
         return f"{self.degree} - {self.institution}"
