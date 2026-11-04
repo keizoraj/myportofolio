@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -176,41 +177,18 @@ class MainTest(TestCase):
     # =========================
 
     def test_education_page(self):
-        education = Education.objects.create(
+        Education.objects.create(
             institution="Universitas Indonesia",
             degree="S1 Sistem Informasi",
             description="Fakultas Ilmu Komputer.",
             started_at=self.started_at,
         )
 
-        response = self.client.get(
-            reverse("main:show_education")
-        )
+        response = self.client.get(reverse("main:show_education"))
 
-        self.assertEqual(
-            response.status_code,
-            200
-        )
-        self.assertTemplateUsed(
-            response,
-            "education.html"
-        )
-        self.assertContains(
-            response,
-            education.institution
-        )
-        self.assertContains(
-            response,
-            education.degree
-        )
-        self.assertContains(
-            response,
-            education.description
-        )
-        self.assertContains(
-            response,
-            "Sekarang"
-        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "education.html")
+        self.assertContains(response, reverse("main:get_education_json"))
 
     def test_empty_education_page(self):
         response = self.client.get(
@@ -246,6 +224,13 @@ class MainTest(TestCase):
     # =========================
 
     def test_create_education(self):
+        user = User.objects.create_superuser(
+            username="testowner",
+            password="test-password",
+            email="test@example.com",
+        )
+        self.client.force_login(user)
+
         data = {
             "institution": "Universitas Indonesia",
             "degree": "S1 Sistem Informasi",
@@ -276,6 +261,13 @@ class MainTest(TestCase):
     # =========================
 
     def test_update_education(self):
+        user = User.objects.create_superuser(
+            username="testowner",
+            password="test-password",
+            email="test@example.com",
+        )
+        self.client.force_login(user)
+
         education = Education.objects.create(
             institution="Universitas Indonesia",
             degree="S1 Sistem Informasi",
@@ -316,6 +308,13 @@ class MainTest(TestCase):
     # =========================
 
     def test_delete_education(self):
+        user = User.objects.create_superuser(
+            username="testowner",
+            password="test-password",
+            email="test@example.com",
+        )
+        self.client.force_login(user)
+
         education = Education.objects.create(
             institution="Universitas Indonesia",
             degree="S1 Sistem Informasi",
@@ -359,25 +358,13 @@ class MainTest(TestCase):
             reverse("main:get_education_json")
         )
 
-        self.assertEqual(
-            response.status_code,
-            200
-        )
-        self.assertEqual(
-            response["Content-Type"],
-            "application/json"
-        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/json")
 
         data = json.loads(response.content)
 
-        self.assertEqual(
-            len(data),
-            1
-        )
-        self.assertEqual(
-            data[0]["model"],
-            "main.education"
-        )
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["pk"], str(education.id))
         self.assertEqual(
             data[0]["fields"]["institution"],
             education.institution
@@ -385,6 +372,10 @@ class MainTest(TestCase):
         self.assertEqual(
             data[0]["fields"]["degree"],
             education.degree
+        )
+        self.assertEqual(
+            data[0]["fields"]["description"],
+            education.description
         )
 
     def test_education_page_uses_json_data(self):
@@ -395,23 +386,32 @@ class MainTest(TestCase):
             started_at=self.started_at,
         )
 
+        # Memastikan halaman Education berhasil dibuka.
         response = self.client.get(
             reverse("main:show_education")
         )
 
-        self.assertEqual(
-            response.status_code,
-            200
-        )
+        self.assertEqual(response.status_code, 200)
 
-        # Data berhasil ditampilkan setelah
-        # proses JSON dan deserialization.
+        # Memastikan halaman menggunakan endpoint JSON.
         self.assertContains(
             response,
+            reverse("main:get_education_json")
+        )
+
+        # Memastikan endpoint JSON mengembalikan data.
+        json_response = self.client.get(
+            reverse("main:get_education_json")
+        )
+
+        self.assertEqual(json_response.status_code, 200)
+
+        self.assertContains(
+            json_response,
             education.institution
         )
         self.assertContains(
-            response,
+            json_response,
             education.degree
         )
 
@@ -445,22 +445,34 @@ class MainTest(TestCase):
             project_image_url="https://example.com/greenspark.jpg",
         )
 
+        # Memastikan halaman Projects berhasil dibuka.
         response = self.client.get(
             reverse("main:show_projects")
         )
 
+        self.assertEqual(response.status_code, 200)
+
+        # Memastikan halaman menggunakan endpoint DRF.
         self.assertContains(
             response,
-            project.title
+            reverse("api:project-list")
         )
-        self.assertContains(
-            response,
-            project.description
+
+        # Memastikan data proyek tersedia melalui API.
+        json_response = self.client.get(
+            reverse("api:project-list")
         )
-        self.assertContains(
-            response,
-            project.tech_stack
+
+        self.assertEqual(json_response.status_code, 200)
+
+        project_data = next(
+            item for item in json_response.data
+            if item["id"] == str(project.id)
         )
+
+        self.assertEqual(project_data["title"], project.title)
+        self.assertEqual(project_data["description"], project.description)
+        self.assertEqual(project_data["tech_stack"], project.tech_stack)
 
     def test_empty_project_page(self):
         Project.objects.all().delete()
@@ -471,5 +483,5 @@ class MainTest(TestCase):
 
         self.assertContains(
             response,
-            "Belum ada proyek yang ditambahkan."
+            "Belum ada proyek yang ditambahkan atau ditemukan."
         )
