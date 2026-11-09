@@ -188,7 +188,7 @@ def update_education(request, education_id):
 
 @login_required(login_url="/login/")
 def delete_education(request, education_id):
-    if not can_edit(request.user):
+    if not request.user.is_superuser:
         raise PermissionDenied
 
     education = get_object_or_404(
