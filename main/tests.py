@@ -188,7 +188,7 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "education.html")
-        self.assertContains(response, reverse("main:get_education_json"))
+        self.assertContains(response, reverse("api:education-list"))
 
     def test_empty_education_page(self):
         response = self.client.get(
@@ -396,7 +396,7 @@ class MainTest(TestCase):
         # Memastikan halaman menggunakan endpoint JSON.
         self.assertContains(
             response,
-            reverse("main:get_education_json")
+            reverse("api:education-list")
         )
 
         # Memastikan endpoint JSON mengembalikan data.
