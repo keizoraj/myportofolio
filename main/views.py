@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied  
 from django.http import JsonResponse  
 from django.views.decorators.http import require_POST    
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 def show_main(request):
@@ -109,6 +110,7 @@ def get_experience_json(request):
         content_type="application/json"
     )
 
+@ensure_csrf_cookie
 def show_education(request):
     context = {
         "name": "Keizora",

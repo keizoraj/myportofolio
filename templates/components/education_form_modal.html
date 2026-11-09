@@ -1,11 +1,12 @@
-{% load static %}
-
 <div id="education-modal" class="project-form-modal" popover="auto">
     <div class="project-form-modal__content">
+
         <div class="project-form-modal__header">
             <div>
-                <p class="section-kicker">Tambah Data</p>
-                <h2>Tambah Pendidikan</h2>
+                <p class="section-kicker">Data Pendidikan</p>
+                <h2 id="education-modal-title">
+                    Tambah Pendidikan
+                </h2>
             </div>
 
             <button
@@ -19,11 +20,7 @@
             </button>
         </div>
 
-        <form
-            id="education-form"
-            method="POST"
-            action="{% url 'main:create_education_ajax' %}"
-        >
+        <form id="education-form" method="POST">
             {% csrf_token %}
 
             <div class="form-group">
@@ -101,6 +98,7 @@
                     Tambah Pendidikan
                 </button>
             </div>
+
         </form>
     </div>
 </div>
