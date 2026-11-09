@@ -147,6 +147,7 @@ class ProjectAPITest(APITestCase):
             name="Editor"
         )
         editor.groups.add(editor_group)
+        initial_count = Education.objects.count()
 
         self.client.force_authenticate(user=editor)
 
@@ -162,6 +163,7 @@ class ProjectAPITest(APITestCase):
         )
 
         self.assertEqual(response.status_code, 403)
+        self.assertEqual(Education.objects.count(), initial_count)
 
     def test_editor_cannot_delete_education(self):
         editor = User.objects.create_user(
@@ -289,3 +291,193 @@ class ProjectAPITest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Education.objects.filter(pk=education_id).exists())
+
+    
+    def test_education_guest_and_normal_user_cannot_write(self):
+        education = Education.objects.create(
+            institution="Universitas Indonesia",
+            degree="S1 Sistem Informasi",
+            description="Deskripsi awal.",
+            started_at=timezone.now(),
+        )
+
+        list_url = reverse("api:education-list")
+        detail_url = reverse(
+            "api:education-detail",
+            args=[education.id],
+        )
+
+        payload = {
+            "institution": "Pendidikan Baru",
+            "degree": "S2",
+            "description": "Deskripsi baru.",
+            "started_at": timezone.now().isoformat(),
+        }
+
+        for user in (None, self.visitor):
+            self.client.force_authenticate(user=user)
+
+            response = self.client.post(
+                list_url,
+                payload,
+                format="json",
+            )
+            self.assertEqual(response.status_code, 403)
+
+            response = self.client.patch(
+                detail_url,
+                {"description": "Tidak boleh diubah."},
+                format="json",
+            )
+            self.assertEqual(response.status_code, 403)
+
+            response = self.client.delete(detail_url)
+            self.assertEqual(response.status_code, 403)
+
+            self.assertEqual(Education.objects.count(), 1)
+
+            education.refresh_from_db()
+            self.assertEqual(
+                education.description,
+                "Deskripsi awal.",
+            )
+
+    
+    def test_education_validation_and_html_sanitization(self):
+        self.client.force_authenticate(user=self.owner)
+
+        list_url = reverse("api:education-list")
+
+        payload = {
+            "institution": "Universitas Test",
+            "degree": "S1 Testing",
+            "description": "Deskripsi aman.",
+            "started_at": timezone.now().isoformat(),
+        }
+
+        invalid_cases = [
+            {"institution": "   "},
+            {"institution": "<b></b>"},
+            {"degree": "   "},
+        ]
+
+        for changes in invalid_cases:
+            response = self.client.post(
+                list_url,
+                {**payload, **changes},
+                format="json",
+            )
+
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_400_BAD_REQUEST,
+            )
+
+        self.assertEqual(Education.objects.count(), 0)
+
+        sanitized_payload = {
+            **payload,
+            "institution": "<b>Test University</b>",
+            "degree": "<i>Bachelor</i>",
+            "description": "<p>Safe description</p>",
+        }
+
+        response = self.client.post(
+            list_url,
+            sanitized_payload,
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED,
+        )
+
+        self.assertEqual(
+            response.data["institution"],
+            "Test University",
+        )
+        self.assertEqual(
+            response.data["degree"],
+            "Bachelor",
+        )
+        self.assertEqual(
+            response.data["description"],
+            "Safe description",
+        )
+
+    
+    def test_education_star_requires_login_and_toggles(self):
+        education = Education.objects.create(
+            institution="Universitas Indonesia",
+            degree="S1 Sistem Informasi",
+            description="Deskripsi pendidikan.",
+            started_at=timezone.now(),
+        )
+
+        star_url = reverse(
+            "api:education-star",
+            args=[education.id],
+        )
+
+        response = self.client.post(star_url)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+        self.client.force_authenticate(user=self.visitor)
+
+        response = self.client.post(star_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["is_starred"])
+        self.assertEqual(response.data["star_count"], 1)
+
+        self.assertTrue(
+            education.starred_by.filter(
+                pk=self.visitor.pk
+            ).exists()
+        )
+
+        response = self.client.post(star_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.data["is_starred"])
+        self.assertEqual(response.data["star_count"], 0)
+
+        self.assertFalse(
+            education.starred_by.filter(
+                pk=self.visitor.pk
+            ).exists()
+        )
+
+    
+    def test_education_session_write_without_csrf_is_rejected(self):
+        client = APIClient(enforce_csrf_checks=True)
+
+        self.assertTrue(
+            client.login(
+                username="owner",
+                password="test-password",
+            )
+        )
+
+        response = client.post(
+            reverse("api:education-list"),
+            {
+                "institution": "CSRF Test",
+                "degree": "S1 Testing",
+                "description": "Percobaan CSRF.",
+                "started_at": timezone.now().isoformat(),
+            },
+            format="json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_403_FORBIDDEN,
+        )
+
+        self.assertEqual(Education.objects.count(), 0)
+
